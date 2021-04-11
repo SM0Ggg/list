@@ -1,0 +1,169 @@
+#include<iostream>
+using namespace std;
+
+struct list {
+	int inf;
+	list* next;
+	list* prev;
+};
+
+void push(list*& h, list*& t, int x) {  //вставка элемента в список
+	list* r = new list;
+	r->inf = x;
+	r->next = nullptr;
+	if (!h && !t) {
+		r->prev = nullptr;
+		h = r;
+	}
+	else {
+		t->next = r;
+		r->prev = t;
+	}
+	t = r;
+}
+
+void reverse_print(list*& h, list*& t) {  //обратный вывод списка
+	list* p = t;
+	while (p) {
+		cout << p->inf << " ";
+		p = p->prev;
+	}
+}
+
+void print(list*& h, list*& t) {  //вывод списка
+	list* p = h;
+	while (p) {
+		cout << p->inf << " ";
+		p = p->next;
+	}
+}
+
+list* reverse_find_cht(list*& h, list*& t) {  //поиск четного элемента с конца
+	list* p = t;
+	while (p) {
+		if ((p->inf) % 2 == 0) break;
+		p = p->prev;
+	}
+	return p;
+}
+
+list* find(list* h, list* t, int x) {   //поиск элемента
+	list* p = h;
+	while (p) {
+		if (p->inf == x) break;
+		p = p->next;
+	}
+	return p;
+}
+
+list* reverse_find(list* h, list* t, int x) {   //поиск элемента
+	list* p = t;
+	while (p) {
+		if (p->inf == x) break;
+		p = p->prev;
+	}
+	return p;
+}
+
+void del_node(list*& h, list*& t, list*& r) {   //удаление одного элемента
+	if (r == h && r == t) {
+		h = t = nullptr;
+	}
+	else if (r == h) {
+		h = h->next;
+		h->prev = nullptr;
+	}
+	else if (r == t) {
+		t = t->prev;
+		t->next = nullptr;
+	}
+	else {
+		r->next->prev = r->prev;
+		r->prev->next = r->next;
+	}
+	delete r;
+}
+
+int find_max(list*& h, list*& t) {   //поиск максимального элемента
+	int x = h->inf;
+	list* p = h->next;
+	while (p) {
+		if (p->inf > x) {
+			x = p->inf;
+		}
+		p = p->next;
+	}
+	return x;
+}
+
+int find_min(list*& h, list*& t) {   //поиск минимального элемента
+	int x = h->inf;
+	list* p = h->next;
+	while (p) {
+		if (p->inf < x) {
+			x = p->inf;
+		}
+		p = p->next;
+	}
+	return x;
+}
+
+void insert_after(list*& h, list*& t, list*& r, int y) { //вставка после элемента
+	list* p = new list;
+	p->inf = y;
+	if (r == t) {
+		p->next = nullptr;
+		p->prev = r;
+		r->next = p;
+		t = p;
+	}
+	else {
+		r->next->prev = p;
+		p->next = r->next;
+		p->prev = r;
+		r->next = p;
+	}
+}
+
+void del_list(list*& h, list*& t) { //удаление списка
+	while (h != t) {
+		h = h->next;
+		delete h->prev;
+	}
+	delete h;
+	h = nullptr;
+	t = nullptr;
+}
+
+int main() {
+	setlocale(LC_ALL, "RUS");
+	int x, n;
+	cout << "Введите кол-во элементов списка:";
+	cin >> n;
+	list* h = nullptr;
+	list* t = nullptr;
+	for (int i = 0; i < n; i++) {
+		cout << "a[" << i << "]=";
+		cin >> x;
+		push(h, t, x);
+	}
+	cout << "Обратный вывод" << endl;
+	reverse_print(h, t);
+	cout << endl << "Последний четный элемент" << endl;
+	list* k = reverse_find_cht(h, t);
+	cout << k->inf << endl;
+	int m = find_min(h, t);
+	k = find(h, t, m);
+	del_node(h, t, k);
+	cout << "Список без первого минимального элемента" << endl;
+	print(h, t);
+	m = find_max(h, t);
+	k = reverse_find(h, t, m);
+	insert_after(h, t, k, 0);
+	cout << endl << "Список со вставленным 0 после последнего максимального элемента" << endl;
+	print(h, t);
+	cout << endl;
+	del_list(h, t);
+	system("pause");
+	return 0;
+}
